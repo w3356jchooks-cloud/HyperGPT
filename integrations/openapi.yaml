@@ -1,0 +1,42 @@
+openapi: 3.1.0
+info:
+  title: HyperGPT API
+  version: 0.1.0
+  description: Starter API contract. Protect production endpoints with OAuth or scoped bearer tokens.
+servers:
+  - url: https://YOUR-HYPERGPT-HOST
+paths:
+  /health:
+    get:
+      operationId: getHealth
+      summary: Check HyperGPT backend health
+      responses:
+        '200':
+          description: Service status
+  /abilities/drafts:
+    post:
+      operationId: draftAbility
+      summary: Submit an ability specification for owner review
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, description, permissionScope]
+              properties:
+                name: { type: string, maxLength: 80 }
+                description: { type: string, maxLength: 500 }
+                permissionScope:
+                  type: string
+                  enum: [read_only, workspace_write, network, shell_approval]
+      responses:
+        '201':
+          description: Draft created
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
